@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSid-1564-map</title>
+    <link href='https://fonts.googleapis.com/css?family=Kanit' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    
+    <style>
+         body {
+            margin: 0;
+            padding:0;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            position: fixed; /* Make header fixed */
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-evenly;
+            font-family: kanit;
+            align-items: center;
+            padding: 3px 5%;
+            background: rgba(34, 36, 42, 0.9); /* Semi-transparent background */
+            z-index: 1000; /* Ensure header is above other content */
+        }
+        .title h3 {
+            font-family: kanit;
+            font-weight: 600;
+            font-size: 16px;
+            margin-right: auto;
+            cursor: pointer;
+            color: #ffffff;
+            text-transform: uppercase;
+            font-size: 22px;
+            font-weight: 900;
+        }
+
+        .title span {
+            color: #1DC4E7;
+        }
+        #map {
+            height: 700px;
+            width: 100%;
+            z-index: 990;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -200px; /* Hidden by default */
+            width: 200px;
+            height: 100%;
+            background-color: #333;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            transition: left 0.3s ease; /* Smooth transition for toggling */
+        }
+        .sidebar.open {
+            left: 0; /* Show sidebar */
+        }
+        .sidebar h4 {
+            margin: 0;
+            padding: 15px 0;
+            font-size: 18px;
+            text-align: center;
+            border-bottom: 1px solid #444;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul a {
+            color:#0fff;
+            display:block;
+           
+            margin-bottom: 5px;
+            line-height: 60px;
+            text-decoration: none;
+            padding-left: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar ul a:hover {
+            background-color: #1983d3;
+        }
+        .sidebar i{
+            padding-right: 10px;
+
+        }
+        /* Centered search bar style */
+        .search-container {
+            position: absolute;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 995;
+            background-color: white;
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+        /* Ellipsis button styles */
+        .ellipsis-button {
+            position: absolute;
+            top: 90px;
+            right: 20px;
+            z-index: 1001;
+            background-color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+        .leaflet-control-layers {
+            top: 125px;
+            right: 10px; /* Pushes the control button lower to avoid overlap with ellipsis button */
+            transition: 0.5;
+            transition-property: color;
+        }
+        .leaflet-control-layers:hover{
+                color: #1983d3;
+        }
+        /* Adjust Zoom Control Position */
+        .leaflet-control-zoom-in{
+            position: absolute;
+            left: 50px;
+            top: 90px;
+            transform: translate(-50%, -50%); /* Center the zoom controls */
+            z-index: 1005; /* Ensure it stays above the map */
+        }
+        .leaflet-control-zoom-out{
+            position: absolute;
+            left: 50px;
+            top: 125px;
+            transform: translate(-50%, -50%); /* Center the zoom controls */
+            z-index: 1005; /* Ensure it stays above the map */
+        }
+  </style>
+
+</head>
+<body>
+
+    <header>
+        <div class="title">
+            <h3>PSid - <span>1564</span></h3>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <center>
+            <h4>PSid 1564</h4>
+        </center>
+        <ul>
+            <a href="index.html"><i class="fa-solid fa-home"></i><span>Home</span></a> 
+            <a href="jatinmap.html"><i class="fa-solid fa-map"></i><span>Map</span></a>
+            <a href="sih.html"><i class="fa-solid fa-database"></i><span>Database</span></a>
+            <a href="extract.html"><i class="fa-solid fa-bell"></i><span>Alerts</span></a>
+            <a href="#"><i class="fa-solid fa-gear"></i><span>Setting</span></a>
+        </ul>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Enter city name..." />
+        <button onclick="searchCity()">Search</button>
+    </div>
+
+    <!-- Ellipsis button for toggling sidebar -->
+    <button class="ellipsis-button" onclick="toggleSidebar()">⋮</button>
+
+    <script>
+        // Initialize the map and set its view
+        var map = L.map('map').setView([20.5937, 78.9629], 4);
+        
+        // Default view layer (OpenStreetMap)
+        var defaultLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 15,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+
+        // Satellite view layer
+        var satelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            maxZoom: 15,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            attribution: 'Map data &copy; <a href="https://www.google.com/maps">Google</a>'
+        }).addTo(map);
+
+        // Layer control to switch between views
+        var baseMaps = {
+            "Satellite View": satelliteLayer,
+            "Default View": defaultLayer
+        };
+
+        L.control.layers(baseMaps).addTo(map);
+
+        function searchCity() {
+            var searchValue = document.getElementById('searchInput').value;
+            if (!searchValue) return;
+
+            var geocoder = L.Control.Geocoder.nominatim();
+            geocoder.geocode(searchValue, function(results) {
+                if (results.length > 0) {
+                    var result = results[0];
+                    map.setView(result.center, 10);
+                    L.marker(result.center).addTo(map).bindPopup(result.name).openPopup();
+                } else {
+                    alert("City not found");
+                }
+            });
+        }
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

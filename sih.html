@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar and Cities</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="datastyle.css">
+</head>
+<body>
+  <!-- Header section -->
+  <header>
+    <div class="title">
+      <h3>PSid - <span>1564</span></h3>
+    </div>
+  </header>
+
+  <button class="ellipsis-button" onclick="toggleSidebar()">⋮</button>
+  <div class="sidebar" id="sidebar">
+    <ul>
+        <a href="index.html"><i class="fa-solid fa-home"></i><span>Home</span></a> 
+        <a href="jatinmap.html"><i class="fa-solid fa-map"></i><span>Map</span></a>
+        <a href="sih.html"><i class="fa-solid fa-database"></i><span>Database</span></a>
+        <a href="extract.html"><i class="fa-solid fa-bell"></i><span>Alerts</span></a>
+        <a href="#"><i class="fa-solid fa-gear"></i><span>Setting</span></a>
+    </ul>
+</div>
+
+
+  <!-- Main content section with calendar and city list -->
+  <div class="container">
+    <!-- Left Block: Calendar Form -->
+    <div class="left-block">
+      <h2>Select Dates</h2>
+      <form id="date-form">
+        <label for="initial-date">Initial Date:</label>
+        <input type="date" id="initial-date" name="initial-date">
+        
+        <label for="final-date">Final Date:</label>
+        <input type="date" id="final-date" name="final-date">
+        
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <!-- Right Block: Cities with Coordinates -->
+    <div class="right-block">
+      <h2>City Coordinates</h2>
+      <div class="city">
+        <h3>Berhampur</h3>
+        <p>Coordinates: 40.44 N, 74.0060° W</p>
+      </div>
+      <div class="city">
+        <h3>Bhubnaswar</h3>
+        <p>Coordinates: 34.0522° N, 118.2437° W</p>
+      </div>
+      <div class="city">
+        <h3>Bomaby</h3>
+        <p>Coordinates: 41.8781° N, 87.6298° W</p>
+      </div>
+      <div class="city">
+        <h3>Delhi</h3>
+        <p>Coordinates: 29.7604° N, 95.3698° W</p>
+      </div>
+      <div class="city">
+        <h3>kolkota</h3>
+        <p>Coordinates: 25.7617° N, 80.1918° W</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+  </script>
+</body>
+</html>
